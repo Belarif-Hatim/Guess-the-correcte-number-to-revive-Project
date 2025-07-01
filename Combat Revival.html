@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Press Start 2P', cursive;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #000;
+      overflow: hidden;
+    }
+
+    .game-over-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      color: white;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in;
+    }
+.revive-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+      color: white;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .minigame-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #1a1a2e, #16213e);
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1002;
+      color: white;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .game-over-title {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #ff4444;
+      text-shadow: 4px 4px 0px #000;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .winner-text {
+      font-size: 24px;
+      margin-bottom: 40px;
+      color: #ffff44;
+      text-shadow: 2px 2px 0px #000;
+    }
+
+    .game-over-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .game-over-button {
+      background: linear-gradient(45deg, #444, #666);
+      border: 4px solid #fff;
+      color: white;
+      padding: 15px 30px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 200px;
+    }
+
+    .game-over-button:hover {
+      background: linear-gradient(45deg, #666, #888);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .game-over-button:active {
+      transform: translateY(0);
+    }
+
+    .revive-button {
+      background: linear-gradient(45deg, #e74c3c, #c0392b);
+      border: 4px solid #fff;
+      color: white;
+      padding: 15px 30px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 200px;
+    }
+
+    .revive-button:hover {
+      background: linear-gradient(45deg, #c0392b, #a93226);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .difficulty-button {
+      background: linear-gradient(45deg, #27ae60, #229954);
+      border: 4px solid #fff;
+      color: white;
+      padding: 15px 30px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 180px;
+      margin: 10px;
+    }
+
+    .difficulty-button:hover {
+      background: linear-gradient(45deg, #229954, #1e8449);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .minigame-input {
+      background: #2c3e50;
+      border: 4px solid #fff;
+      color: white;
+      padding: 15px;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 18px;
+      text-align: center;
+      width: 200px;
+      margin: 20px;
+    }
+
+    .minigame-input:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .stats {
+      margin: 30px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .stats div {
+      margin: 10px 0;
+    }
+
+         .minigame-info {
+            font-size: 20px;
+            color: #bdc3c7;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+   .guess-feedback {
+            font-size: 20px;
+            margin: 15px 0;
+            min-height: 20px;
+            text-shadow: 4px 4px 0px #000;animation: pulse 2s infinite;
+        }
+
+        .guess-feedback.too-high {
+            color: #e74c3c;
+        }
+
+        .guess-feedback.too-low {
+            color: #f39c12;
+        }
+
+        .guess-feedback.correct {
+            color: #27ae60;
+        }
+  </style>
+</head>
+<body>
+  <!-- Game Over Scene -->
+  <div id="gameOverScene" class="game-over-scene">
+    <div class="game-over-title">GAME OVER</div>
+    <div id="winnerText" class="winner-text">Player 1 Wins!</div>
+    <div class="stats">
+      <div id="finalTime">Time: 0s</div>
+      <div id="playerHealthStat">Player 1 Health: 100</div>
+      <div id="enemyHealthStat">Player 2 Health: 100</div>
+    </div>
+    <div class="game-over-menu">
+      <button class="game-over-button" onclick="restartGame()">PLAY AGAIN</button>
+      <button class="revive-button" id="reviveButton" onclick="showReviveScreen()">REVIVE</button>
+      <button class="game-over-button" onclick="returnToMenu()">MAIN MENU</button>
+    </div>
+  </div>
+
+    <!-- Revive Difficulty Selection Screen -->
+      <div id="reviveScreen" class="screen revive-screen">
+        <div style="font-size: 48px; margin-bottom: 30px; color: #e74c3c;text-shadow: 4px 4px 0px #000;animation: pulse 2s infinite;">CHOOSE DIFFICULTY</div>
+        <div style="font-size: 20px; margin-bottom: 40px; color: #bdc3c7; line-height: 1.6;">
+            Win the number guessing game to revive!<br>
+            Easy: Restores 25% of health<br>
+            Medium: Restores 50% of health <br>
+            Hard: Restores 100% of health
+        </div>
+        <div>
+            <button class="difficulty-button" onclick="startMinigame('easy')">EASY (1-10)</button>
+            <button class="difficulty-button" onclick="startMinigame('medium')">Medium (1-50)</button>
+            <button class="difficulty-button" onclick="startMinigame('hard')">HARD (1-100)</button>
+        </div>
+
+  <!-- Mini-game Screen -->
+</div>
+        <div id="minigameScreen" class="screen minigame-screen">
+        <div style="font-size: 48px; margin-bottom: 20px; color: #3498db;text-shadow: 4px 4px 0px #000;animation: pulse 2s infinite;">NUMBER GUESSING</div>
+        <div id="minigameDifficulty" style="font-size: 20px; margin-bottom: 20px; color: #f39c12;">Easy Mode (1-10)</div>
+        <div class="minigame-info">
+            <div id="attemptsLeft">Attempts left: 5</div>
+            <div id="rangeHint">Guess a number between 1 and 10</div>
+        </div>
+        <input type="number" id="guessInput" class="minigame-input" placeholder="Enter guess" min="1">
+        <div id="guessFeedback" class="guess-feedback"></div>
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
+            <button class="game-over-button" onclick="submitGuess()">SUBMIT</button>
+            <button class="game-over-button" onclick="giveUpMinigame()">GIVE UP</button>
+        </div>
+    </div>
+
+
+  <!-- Main Menu Scene -->
+  <div id="mainMenu" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #1a1a2e, #16213e); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999; color: white; text-align: center;">
+    <div style="font-size: 56px; margin-bottom: 40px; color: #ff6b6b; text-shadow: 4px 4px 0px #000; animation: pulse 2s infinite;">FIGHTER</div>
+    <div style="font-size: 18px; margin-bottom: 60px; color: #4ecdc4;">The Ultimate Fighting Experience</div>
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <button class="game-over-button" onclick="startGame()" style="font-size: 18px; padding: 20px 40px;">START GAME</button>
+      <button class="game-over-button" onclick="showControls()" style="font-size: 14px;">CONTROLS</button>
+    </div>
+  </div>
+
+  <!-- Controls Screen -->
+  <div id="controlsScreen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 998; color: white; text-align: center;">
+    <div style="font-size: 32px; margin-bottom: 40px; color: #ff6b6b;">CONTROLS</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; font-size: 14px; line-height: 2;">
+      <div>
+        <div style="color: #4ecdc4; font-size: 18px; margin-bottom: 20px;">PLAYER 1</div>
+        <div>A - Move Left</div>
+        <div>D - Move Right</div>
+        <div>W - Jump</div>
+        <div>SPACE - Attack</div>
+      </div>
+      <div>
+        <div style="color: #4ecdc4; font-size: 18px; margin-bottom: 20px;">PLAYER 2</div>
+        <div>← - Move Left</div>
+        <div>→ - Move Right</div>
+        <div>↑ - Jump</div>
+        <div>↓ - Attack</div>
+      </div>
+    </div>
+    <button class="game-over-button" onclick="hideControls()" style="margin-top: 40px;">BACK</button>
+  </div>
+
+  <!-- red container div -->
+  <div id="gameContainer" style="position: relative; display: inline-block; display: none;">
+    <!-- smaller red container div -->
+    <div
+      style="
+        position: absolute;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        padding: 20px;
+      "
+    >
+      <!-- player health -->
+      <div
+        style="
+          position: relative;
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+          border-top: 4px solid white;
+          border-left: 4px solid white;
+          border-bottom: 4px solid white;
+        "
+      >
+        <div style="background-color: red; height: 30px; width: 100%"></div>
+        <div
+          id="playerHealth"
+          style="
+            position: absolute;
+            background: #818cf8;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+          "
+        ></div>
+      </div>
+
+      <!-- timer -->
+      <div
+        id="timer"
+        style="
+          background-color: black;
+          width: 100px;
+          height: 50px;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          border: 4px solid white;
+        "
+      >
+        60
+      </div>
+      <!-- enemy health -->
+      <div
+        style="
+          position: relative;
+          width: 100%;
+          border-top: 4px solid white;
+          border-bottom: 4px solid white;
+          border-right: 4px solid white;
+        "
+      >
+        <div style="background-color: red; height: 30px"></div>
+        <div
+          id="enemyHealth"
+          style="
+            position: absolute;
+            background: #818cf8;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+          "
+        ></div>
+      </div>
+      <div></div>
+    </div>
+    <canvas></canvas>
+  </div>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+    integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+
+  <script>
+    // Game state management
+    let gameState = 'menu'; // 'menu', 'playing', 'gameOver'
+    let animationId;
+    let canvas, c;
+    let player, enemy, background, shop;
+    let keys, timer, timerId;
+    let gameStats = {};
+
+        
+    // Minigame variables
+    let minigameDifficulty = 'easy';
+    let targetNumber = 0;
+    let attemptsLeft = 0;
+    let loserPlayer = null; // 'player' or 'enemy'
+
+    // Utility functions
+    function rectangularCollision({ rectangle1, rectangle2 }) {
+      return (
+        rectangle1.attackBox.position.x + rectangle1.attackBox.width >=
+          rectangle2.position.x &&
+        rectangle1.attackBox.position.x <=
+          rectangle2.position.x + rectangle2.width &&
+        rectangle1.attackBox.position.y + rectangle1.attackBox.height >=
+          rectangle2.position.y &&
+        rectangle1.attackBox.position.y <= rectangle2.position.y + rectangle2.height
+      )
+    }
+
+    function determineWinner({ player, enemy, timerId }) {
+      clearTimeout(timerId);
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      
+      gameState = 'gameOver';
+      
+      // Calculate final stats
+      gameStats = {
+        finalTime: 60 - timer,
+        playerHealth: player.health,
+        enemyHealth: enemy.health,
+        winner: player.health === enemy.health ? 'tie' : 
+                (player.health > enemy.health ? 'player1' : 'player2')
+      };
+      // Determine loser for revive functionality
+      if (gameStats.winner === 'player1') {
+        loserPlayer = 'enemy';
+        player.health = 100;
+      } else if (gameStats.winner === 'player2') {
+        loserPlayer = 'player';
+        enemy.health = 100;
+      } else {
+        loserPlayer = null; // No revive for ties
+      }
+      
+      showGameOverScene();
+    }
+
+    function showGameOverScene() {
+      const gameOverScene = document.getElementById('gameOverScene');
+      const winnerText = document.getElementById('winnerText');
+      const finalTime = document.getElementById('finalTime');
+      const playerHealthStat = document.getElementById('playerHealthStat');
+      const enemyHealthStat = document.getElementById('enemyHealthStat');
+      const reviveButton = document.getElementById('reviveButton');
+      
+      // Update winner text
+      if (gameStats.winner === 'tie') {
+        winnerText.textContent = 'It\'s a Tie!';
+        winnerText.style.color = '#ffff44';
+        reviveButton.style.display = 'none'; // No revive for ties
+      } else if (gameStats.winner === 'player1') {
+        winnerText.textContent = 'Player 1 Wins!';
+        winnerText.style.color = '#44ff44';
+        reviveButton.style.display = 'block';
+      } else {
+        winnerText.textContent = 'Player 2 Wins!';
+        winnerText.style.color = '#44ff44';
+        reviveButton.style.display = 'block';
+      }
+      
+      // Update stats
+      finalTime.textContent = `Time: ${gameStats.finalTime}s`;
+      playerHealthStat.textContent = `Player 1 Health: ${gameStats.playerHealth}`;
+      enemyHealthStat.textContent = `Player 2 Health: ${gameStats.enemyHealth}`;
+      
+      gameOverScene.style.display = 'flex';
+    }
+
+    function showReviveScreen() {
+      document.getElementById('gameOverScene').style.display = 'none';
+      document.getElementById('reviveScreen').style.display = 'flex';
+    }
+
+    function hideReviveScreen() {
+      document.getElementById('reviveScreen').style.display = 'none';
+      document.getElementById('gameOverScene').style.display = 'flex';
+    }
+
+    function startMinigame(difficulty) {
+      minigameDifficulty = difficulty;
+      document.getElementById('reviveScreen').style.display = 'none';
+      document.getElementById('minigameScreen').style.display = 'flex';
+      
+      // Set up minigame based on difficulty
+            if (difficulty === 'easy') {
+                targetNumber = Math.floor(Math.random() * 10) + 1;
+                attemptsLeft = 5;
+                document.getElementById('minigameDifficulty').textContent = 'Easy Mode (1-10)';
+                document.getElementById('rangeHint').textContent = 'Guess a number between 1 and 10';
+                document.getElementById('guessInput').max = 10;
+            } else if (difficulty === 'hard'){
+                targetNumber = Math.floor(Math.random() * 100) + 1;
+                attemptsLeft = 10;
+                document.getElementById('minigameDifficulty').textContent = 'Hard Mode (1-100)';
+                document.getElementById('rangeHint').textContent = 'Guess a number between 1 and 100';
+                document.getElementById('guessInput').max = 100;
+            }else{
+                targetNumber = Math.floor(Math.random() * 50) + 1;
+                attemptsLeft = 7;
+                document.getElementById('minigameDifficulty').textContent = 'Hard Mode (1-50)';
+                document.getElementById('rangeHint').textContent = 'Guess a number between 1 and 50';
+                document.getElementById('guessInput').max = 50;
+            }
+      
+      document.getElementById('attemptsLeft').textContent = `Attempts left: ${attemptsLeft}`;
+      document.getElementById('guessFeedback').textContent = '';
+      document.getElementById('guessInput').value = '';
+      document.getElementById('guessInput').focus();
+    }
+
+    function submitGuess() {
+      const guessInput = document.getElementById('guessInput');
+      const feedback = document.getElementById('guessFeedback');
+      const guess = parseInt(guessInput.value);
+      
+      if (isNaN(guess) || guess < 1 || (minigameDifficulty === 'easy' && guess > 10) || (minigameDifficulty === 'hard' && guess > 100)|| 
+                (minigameDifficulty === 'medium' && guess > 50)) {
+        feedback.textContent = 'Please enter a valid number!';
+        feedback.className = 'guess-feedback';
+        document.getElementById('guessInput').value = '';
+        document.getElementById('guessInput').focus();
+        return;
+      }
+      
+      attemptsLeft--;
+      document.getElementById('attemptsLeft').textContent = `Attempts left: ${attemptsLeft}`;
+      
+      if (guess === targetNumber) {
+        // Win!
+        feedback.textContent = 'CORRECT! You win!';
+        feedback.className = 'guess-feedback correct';
+        
+        setTimeout(() => {
+          revivePlayer();
+        }, 2000);
+        
+      } else if (guess < targetNumber) {
+        feedback.textContent = 'Too low!';
+        feedback.className = 'guess-feedback too-low';
+      } else {
+        feedback.textContent = 'Too high!';
+        feedback.className = 'guess-feedback too-high';
+      }
+      
+      if (attemptsLeft === 0 && guess !== targetNumber) {
+        feedback.textContent = `Game Over! The number was ${targetNumber}`;
+        feedback.className = 'guess-feedback';
+        
+        setTimeout(() => {
+          giveUpMinigame();
+        }, 2000);
+      }
+      
+      guessInput.value = '';
+    }
+
+    function revivePlayer() {
+      // Restore health based on difficulty
+      let healthRestore
+      if(minigameDifficulty === 'easy'){
+        healthRestore = 25;
+      }else if(minigameDifficulty === 'medium'){
+                healthRestore = 50;
+      }else{
+          healthRestore = 100;
+      }
+     if (loserPlayer === 'player') {
+  player.health = healthRestore;
+  player.dead = false;
+  player.switchSprite('idle'); 
+  player.framesCurrent = 0;
+  player.velocity = { x: 0, y: 0 };
+  keys.a.pressed = false;
+  keys.d.pressed = false;
+  player.lastKey = null;
+  gsap.to('#playerHealth', { width: player.health + '%' });
+  gsap.to('#playerHealth', { width: enemy.health + '%' });
+} else if (loserPlayer === 'enemy') {
+  enemy.health = healthRestore;
+  enemy.dead = false;
+  enemy.switchSprite('idle'); 
+  enemy.framesCurrent = 0;
+  enemy.velocity = { x: 0, y: 0 };
+  keys.ArrowLeft.pressed = false;
+  keys.ArrowRight.pressed = false;
+  enemy.lastKey = null;
+  gsap.to('#enemyHealth', { width: enemy.health + '%' });
+  gsap.to('#enemyHealth', { width: player.health + '%' });
+}
+console.log(player.image === player.sprites.death.image);
+      // Hide minigame and resume game
+      document.getElementById('minigameScreen').style.display = 'none';
+      gameState = 'playing';
+      animate();
+}
+
+    function giveUpMinigame() {
+      document.getElementById('minigameScreen').style.display = 'none';
+      document.getElementById('gameOverScene').style.display = 'flex';
+    }
+
+    // Add Enter key support for minigame
+    window.addEventListener('keydown', (event) => {
+      if (document.getElementById('minigameScreen').style.display === 'flex' && event.key === 'Enter') {
+        submitGuess();
+      }
+    });
+
+    function decreaseTimer() {
+      if (timer > 0 && gameState === 'playing') {
+        timerId = setTimeout(decreaseTimer, 1000);
+        timer--;
+        document.querySelector('#timer').innerHTML = timer;
+      }
+
+      if (timer === 0) {
+        determineWinner({ player, enemy, timerId });
+      }
+    }
+
+    // Sprite and Fighter classes
+    class Sprite {
+      constructor({
+        position,
+        imageSrc,
+        scale = 1,
+        framesMax = 1,
+        offset = { x: 0, y: 0 }
+      }) {
+        this.position = position;
+        this.width = 50;
+        this.height = 150;
+        this.image = new Image();
+        this.image.src = imageSrc;
+        this.scale = scale;
+        this.framesMax = framesMax;
+        this.framesCurrent = 0;
+        this.framesElapsed = 0;
+        this.framesHold = 5;
+        this.offset = offset;
+      }
+      
+      draw() {
+        if (!this.image.complete) return;
+        c.drawImage(
+          this.image,
+          this.framesCurrent * (this.image.width / this.framesMax),
+          0,
+          this.image.width / this.framesMax,
+          this.image.height,
+          this.position.x - this.offset.x,
+          this.position.y - this.offset.y,
+          (this.image.width / this.framesMax) * this.scale,
+          this.image.height * this.scale
+        );
+      }
+
+      animateFrames() {
+        this.framesElapsed++;
+
+        if (this.framesElapsed % this.framesHold === 0) {
+          if (this.framesCurrent < this.framesMax - 1) {
+            this.framesCurrent++;
+          } else {
+            this.framesCurrent = 0;
+          }
+        }
+      }
+
+      update() {
+        this.draw();
+        this.animateFrames();
+      }
+    }
+
+    class Fighter extends Sprite {
+      constructor({
+        position,
+        velocity,
+        color = 'red',
+        imageSrc,
+        scale = 1,
+        framesMax = 1,
+        offset = { x: 0, y: 0 },
+        sprites,
+        attackBox = { offset: {}, width: undefined, height: undefined }
+      }) {
+        super({
+          position,
+          imageSrc,
+          scale,
+          framesMax,
+          offset
+        });
+
+        this.velocity = velocity;
+        this.width = 50;
+        this.height = 150;
+        this.lastKey;
+        this.attackBox = {
+          position: {
+            x: this.position.x,
+            y: this.position.y
+          },
+          offset: attackBox.offset,
+          width: attackBox.width,
+          height: attackBox.height
+        };
+        this.color = color;
+        this.isAttacking;
+        this.health = 100;
+        this.framesCurrent = 0;
+        this.framesElapsed = 0;
+        this.framesHold = 5;
+        this.sprites = sprites;
+        this.dead = false;
+        this.attackTimer = 0; // Add attack timer
+
+        for (const sprite in this.sprites) {
+          sprites[sprite].image = new Image();
+          sprites[sprite].image.src = sprites[sprite].imageSrc;
+        }
+      }
+
+      update() {
+        this.draw();
+        if (!this.dead) this.animateFrames();
+
+        this.attackBox.position.x = this.position.x + this.attackBox.offset.x;
+        this.attackBox.position.y = this.position.y + this.attackBox.offset.y;
+
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 96) {
+          this.velocity.y = 0;
+          this.position.y = 330;
+        } else this.velocity.y += 0.7; // gravity
+      }
+
+      attack() {
+        this.switchSprite('attack1');
+        this.isAttacking = true;
+        this.attackTimer = 15; // Attack duration in frames
+      }
+
+      takeHit() {
+        this.health -= 20;
+
+        if (this.health <= 0) {
+          this.switchSprite('death');
+        } else this.switchSprite('takeHit');
+      }
+
+      switchSprite(sprite) {
+        if (this.image === this.sprites.death.image) {
+          if (this.framesCurrent === this.sprites.death.framesMax - 1)
+            this.dead = true;
+          return;
+        }
+
+        if (
+          this.image === this.sprites.attack1.image &&
+          this.framesCurrent < this.sprites.attack1.framesMax - 1
+        )
+          return;
+
+        if (
+          this.image === this.sprites.takeHit.image &&
+          this.framesCurrent < this.sprites.takeHit.framesMax - 1
+        )
+          return;
+
+        switch (sprite) {
+          case 'idle':
+            if (this.image !== this.sprites.idle.image) {
+              this.image = this.sprites.idle.image;
+              this.framesMax = this.sprites.idle.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+          case 'run':
+            if (this.image !== this.sprites.run.image) {
+              this.image = this.sprites.run.image;
+              this.framesMax = this.sprites.run.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+          case 'jump':
+            if (this.image !== this.sprites.jump.image) {
+              this.image = this.sprites.jump.image;
+              this.framesMax = this.sprites.jump.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+          case 'fall':
+            if (this.image !== this.sprites.fall.image) {
+              this.image = this.sprites.fall.image;
+              this.framesMax = this.sprites.fall.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+          case 'attack1':
+            if (this.image !== this.sprites.attack1.image) {
+              this.image = this.sprites.attack1.image;
+              this.framesMax = this.sprites.attack1.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+          case 'takeHit':
+            if (this.image !== this.sprites.takeHit.image) {
+              this.image = this.sprites.takeHit.image;
+              this.framesMax = this.sprites.takeHit.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+          case 'death':
+            if (this.image !== this.sprites.death.image) {
+              this.image = this.sprites.death.image;
+              this.framesMax = this.sprites.death.framesMax;
+              this.framesCurrent = 0;
+            }
+            break;
+        }
+      }
+    }
+
+    // Game initialization
+    function initializeGame() {
+      canvas = document.querySelector('canvas');
+      c = canvas.getContext('2d');
+      canvas.width = 1024;
+      canvas.height = 576;
+      
+      c.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Create placeholder sprites (colored rectangles since we don't have the images)
+      background = {
+        update: function() {
+          c.fillStyle = '#2c3e50';
+          c.fillRect(0, 0, canvas.width, canvas.height);
+        }
+      };
+
+      shop = {
+        update: function() {
+          c.fillStyle = '#8b4513';
+          c.fillRect(600, 200, 200, 150);
+        }
+      };
+
+      // Create players with placeholder sprites
+      player = new Fighter({
+        position: { x: 0, y: 0 },
+        velocity: { x: 0, y: 0 },
+        offset: { x: 0, y: 0 },
+        imageSrc: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+        framesMax: 1,
+        scale: 1,
+        sprites: {
+          idle: { imageSrc: '', framesMax: 1 },
+          run: { imageSrc: '', framesMax: 1 },
+          jump: { imageSrc: '', framesMax: 1 },
+          fall: { imageSrc: '', framesMax: 1 },
+          attack1: { imageSrc: '', framesMax: 1 },
+          takeHit: { imageSrc: '', framesMax: 1 },
+          death: { imageSrc: '', framesMax: 1 }
+        },
+        attackBox: { offset: { x: 100, y: 50 }, width: 160, height: 50 }
+      });
+
+      // Override draw method for placeholder - show attack state
+      player.draw = function() {
+        if (this.isAttacking) {
+          c.fillStyle = '#e67e22'; // Orange when attacking
+        } else {
+          c.fillStyle = '#3498db'; // Blue normally
+        }
+        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+        
+        // Draw attack box when attacking
+        if (this.isAttacking) {
+          c.fillStyle = 'rgba(255, 255, 0, 0.5)';
+          c.fillRect(
+            this.attackBox.position.x,
+            this.attackBox.position.y,
+            this.attackBox.width,
+            this.attackBox.height
+          );
+        }
+      };
+
+      enemy = new Fighter({
+        position: { x: 400, y: 100 },
+        velocity: { x: 0, y: 0 },
+        color: 'blue',
+        offset: { x: -50, y: 0 },
+        imageSrc: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+        framesMax: 1,
+        scale: 1,
+        sprites: {
+          idle: { imageSrc: '', framesMax: 1 },
+          run: { imageSrc: '', framesMax: 1 },
+          jump: { imageSrc: '', framesMax: 1 },
+          fall: { imageSrc: '', framesMax: 1 },
+          attack1: { imageSrc: '', framesMax: 1 },
+          takeHit: { imageSrc: '', framesMax: 1 },
+          death: { imageSrc: '', framesMax: 1 }
+        },
+        attackBox: { offset: { x: -170, y: 50 }, width: 170, height: 50 }
+      });
+
+      // Override draw method for placeholder - show attack state
+      enemy.draw = function() {
+        if (this.isAttacking) {
+          c.fillStyle = '#c0392b'; // Darker red when attacking
+        } else {
+          c.fillStyle = '#e74c3c'; // Red normally
+        }
+        c.fillRect(this.position.x, this.position.y, this.width, this.height);
+        
+        // Draw attack box when attacking
+        if (this.isAttacking) {
+          c.fillStyle = 'rgba(255, 0, 0, 0.5)';
+          c.fillRect(
+            this.attackBox.position.x,
+            this.attackBox.position.y,
+            this.attackBox.width,
+            this.attackBox.height
+          );
+        }
+      };
+
+      keys = {
+        a: { pressed: false },
+        d: { pressed: false },
+        ArrowRight: { pressed: false },
+        ArrowLeft: { pressed: false }
+      };
+
+      timer = 60;
+      document.querySelector('#timer').innerHTML = timer;
+      document.querySelector('#playerHealth').style.width = '100%';
+      document.querySelector('#enemyHealth').style.width = '100%';
+    }
+
+    // Game loop
+    function animate() {
+      if (gameState !== 'playing') return;
+      
+      animationId = window.requestAnimationFrame(animate);
+
+      c.fillStyle = 'black';
+      c.fillRect(0, 0, canvas.width, canvas.height);
+      background.update();
+      shop.update();
+      c.fillStyle = 'rgba(255, 255, 255, 0.15)';
+      c.fillRect(0, 0, canvas.width, canvas.height);
+      player.update();
+      enemy.update();
+
+      player.velocity.x = 0;
+      enemy.velocity.x = 0;
+
+      // Player movement
+      if (keys.a.pressed && player.lastKey === 'a') {
+        player.velocity.x = -5;
+        player.switchSprite('run');
+      } else if (keys.d.pressed && player.lastKey === 'd') {
+        player.velocity.x = 5;
+        player.switchSprite('run');
+      } else {
+        player.switchSprite('idle');
+      }
+
+      if (player.velocity.y < 0) {
+        player.switchSprite('jump');
+      } else if (player.velocity.y > 0) {
+        player.switchSprite('fall');
+      }
+
+      // Enemy movement
+      if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+        enemy.velocity.x = -5;
+        enemy.switchSprite('run');
+      } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+        enemy.velocity.x = 5;
+        enemy.switchSprite('run');
+      } else {
+        enemy.switchSprite('idle');
+      }
+
+      if (enemy.velocity.y < 0) {
+        enemy.switchSprite('jump');
+      } else if (enemy.velocity.y > 0) {
+        enemy.switchSprite('fall');
+      }
+
+      // Collision detection - simplified for placeholder sprites
+      if (
+        rectangularCollision({
+          rectangle1: player,
+          rectangle2: enemy
+        }) &&
+        player.isAttacking
+      ) {
+        enemy.takeHit();
+        player.isAttacking = false;
+        gsap.to('#enemyHealth', { width: enemy.health + '%' });
+      }
+
+      // Reset player attack after a short delay
+      if (player.isAttacking && player.attackTimer <= 0) {
+        player.isAttacking = false;
+      }
+      if (player.isAttacking) {
+        player.attackTimer--;
+      }
+
+      if (
+        rectangularCollision({
+          rectangle1: enemy,
+          rectangle2: player
+        }) &&
+        enemy.isAttacking
+      ) {
+        player.takeHit();
+        enemy.isAttacking = false;
+        gsap.to('#playerHealth', { width: player.health + '%' });
+      }
+
+      // Reset enemy attack after a short delay
+      if (enemy.isAttacking && enemy.attackTimer <= 0) {
+        enemy.isAttacking = false;
+      }
+      if (enemy.isAttacking) {
+        enemy.attackTimer--;
+      }
+
+      // End game
+      if (enemy.health <= 0 || player.health <= 0) {
+        determineWinner({ player, enemy, timerId });
+      }
+    }
+
+    // Menu functions
+    function startGame() {
+      document.getElementById('mainMenu').style.display = 'none';
+      document.getElementById('gameContainer').style.display = 'inline-block';
+      gameState = 'playing';
+      initializeGame();
+      decreaseTimer();
+      animate();
+    }
+
+    function restartGame() {
+      document.getElementById('gameOverScene').style.display = 'none';
+      gameState = 'playing';
+      initializeGame();
+      decreaseTimer();
+      animate();
+    }
+
+    function returnToMenu() {
+      document.getElementById('gameOverScene').style.display = 'none';
+      document.getElementById('gameContainer').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'flex';
+      gameState = 'menu';
+    }
+
+    function showControls() {
+      document.getElementById('mainMenu').style.display = 'none';
+      document.getElementById('controlsScreen').style.display = 'flex';
+    }
+
+    function hideControls() {
+      document.getElementById('controlsScreen').style.display = 'none';
+      document.getElementById('mainMenu').style.display = 'flex';
+    }
+
+    // Event listeners
+    window.addEventListener('keydown', (event) => {
+      if (gameState !== 'playing') return;
+      
+        switch (event.key) {
+          case 'd':
+            keys.d.pressed = true;
+            player.lastKey = 'd';
+            break;
+          case 'a':
+            keys.a.pressed = true;
+            player.lastKey = 'a';
+            break;
+          case 'w':
+            player.velocity.y = -20;
+            break;
+          case ' ':
+            player.attack();
+            break;
+        }
+      
+      
+        switch (event.key) {
+          case 'ArrowRight':
+            keys.ArrowRight.pressed = true;
+            enemy.lastKey = 'ArrowRight';
+            break;
+          case 'ArrowLeft':
+            keys.ArrowLeft.pressed = true;
+            enemy.lastKey = 'ArrowLeft';
+            break;
+          case 'ArrowUp':
+            enemy.velocity.y = -20;
+            break;
+          case 'ArrowDown':
+            enemy.attack();
+            break;
+        }
+      
+    });
+
+    window.addEventListener('keyup', (event) => {
+      if (gameState !== 'playing') return;
+      
+      switch (event.key) {
+        case 'd':
+          keys.d.pressed = false;
+          break;
+        case 'a':
+          keys.a.pressed = false;
+          break;
+        case 'ArrowRight':
+          keys.ArrowRight.pressed = false;
+          break;
+        case 'ArrowLeft':
+          keys.ArrowLeft.pressed = false;
+          break;
+      }
+    });
+  </script>
+</body>
+</html>
