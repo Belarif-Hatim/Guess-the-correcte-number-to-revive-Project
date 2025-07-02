@@ -1,4 +1,5 @@
 # 🎮 Mini-Jeu "Guess The Number" – Système de Revive Web
+![Statut du projet](https://img.shields.io/badge/statut-en%20développement-blue)
 
 ## 📘 Présentation du Projet
 
