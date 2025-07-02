@@ -1,5 +1,4 @@
- 
-Rapport de Projet : Jeu de devinette de nombre avec niveaux 
+open html file with a navigator to run the games
 1.	Introduction
 1.1	Présentation du Projet
 Le projet consiste à développer une application web interactive en JavaScript, HTML et CSS. L’objectif est de créer un jeu où l’utilisateur doit deviner un nombre aléatoire généré par l’ordinateur. Le jeu propose différents niveaux de difficulté (facile, moyen, difficile) qui influencent l’intervalle du nombre à deviner et le nombre de tentatives autorisées.
